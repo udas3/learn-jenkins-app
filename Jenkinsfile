@@ -15,7 +15,9 @@ pipeline {
 //ls -la to list elements hidden
 //npm node --versionS in order to help debugging if necessary
 //npm ci to install dependencies (in node_modules directory)
+//   npm ci creates the (temporal and unseen by git) node-modules directory
 //npm run build to run the build 
+//  npm build creates the (temporal and unseen by git) build directory
 //ls again to see generated files after execution
                 sh '''
                 ls -la
@@ -28,8 +30,17 @@ pipeline {
             }
         }
         stage('Tests'){
+            agent{
+                docker{
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
             steps{
-                echo 'Test Stage'
+                sh '''
+                test -f build/index.html
+                npm test
+                '''
             }
         }
     }
