@@ -37,11 +37,19 @@ pipeline {
                 }
             }
             steps{
+//npm creates the test-results directory
                 sh '''
                 test -f build/index.html
                 npm test
                 '''
             }
         }
+    }
+//post action. After the stages
+    post {
+        always{
+            junit 'test-results/junit.xml'
+        }
+
     }
 }
